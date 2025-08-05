@@ -48,23 +48,24 @@ export default function Home() {
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-red-600">🎬 MovieVault</h1>
-        <p className="text-gray-500 mt-1 text-sm md:text-base">
+    <div className="min-h-screen bg-[#181818] text-white px-4">
+      <div className="py-10 text-center">
+        <h1 className="text-5xl font-black text-red-600 drop-shadow tracking-tight">
+          🎬 MovieVault
+        </h1>
+        <p className="text-gray-300 mt-2 text-lg tracking-wider">
           Unlock your next favorite movie or series
         </p>
       </div>
-
-      {/* Search and Filters */}
-      <SearchBar query={query} setQuery={setQuery} />
-      <Filters setType={setType} setYear={setYear} />
-
-      {/* Movies or States */}
+      <div className="max-w-3xl mx-auto mb-6 flex gap-3 flex-col md:flex-row items-center justify-center">
+        <SearchBar query={query} setQuery={setQuery} />
+        <Filters setType={setType} setYear={setYear} />
+      </div>
       {loading ? (
-        <Loader />
-      ) : movies.length > 0 ? (
+        <div className="flex justify-center my-20">
+          <Loader />
+        </div>
+      ) : movies.length ? (
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
@@ -72,7 +73,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mt-6"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-7 mt-8"
           >
             {movies.map((movie: any) => (
               <MovieCard
@@ -84,41 +85,32 @@ export default function Home() {
           </motion.div>
         </AnimatePresence>
       ) : debouncedQuery ? (
-        <div className="flex flex-col items-center justify-center mt-10 text-center">
-          <img
-            src={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTptDoJ56CFW2-wkX9uNLM2kthnUpMKvIsWHg&s`}
-            alt="No results"
-            className="w-48 mb-4 opacity-80"
-          />
-          <p className="text-lg text-gray-600 font-medium">No movies found</p>
-          <p className="text-gray-400 text-sm mt-1">
+        <div className="flex flex-col items-center mt-20 opacity-70">
+          <span className="text-7xl mb-4">🎞️</span>
+          <p className="text-lg text-gray-300 font-semibold">No movies found</p>
+          <p className="text-gray-400 mt-1 text-sm">
             Try different keywords or remove filters
           </p>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center mt-12 text-center">
-          <img
-            src={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTptDoJ56CFW2-wkX9uNLM2kthnUpMKvIsWHg&s`}
-            alt="Discover Movies"
-            className="w-56 mb-6 opacity-90"
-          />
-          <h2 className="text-2xl font-semibold">Welcome to MovieVault</h2>
-          <p className="text-gray-500 mt-2 text-sm">
-            Search and explore movies or series, or check out trending films.
+        <div className="flex flex-col items-center mt-24 text-center opacity-90">
+          <span className="text-8xl mb-6">🍿</span>
+          <h2 className="text-2xl font-bold">Welcome to MovieVault</h2>
+          <p className="text-gray-400 mt-2 text-base">
+            Search and explore movies or series, or check out what's trending!
           </p>
         </div>
       )}
-
-      {/* Pagination */}
       {totalResults > 10 && (
-        <Pagination
-          currentPage={page}
-          totalPages={Math.ceil(totalResults / 10)}
-          onPageChange={setPage}
-        />
+        <div className="flex justify-center my-10 py-4">
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(totalResults / 10)}
+            onPageChange={setPage}
+          />
+        </div>
       )}
-
-      {/* Movie Details Modal */}
+      {/* Modal */}
       <AnimatePresence>
         {selectedMovie && (
           <MovieModal

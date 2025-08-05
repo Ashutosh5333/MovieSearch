@@ -3,39 +3,31 @@ import { FC } from "react";
 import { motion } from "framer-motion";
 import { PaginationProps } from "../types/Types";
 
-const Pagination: FC<PaginationProps> = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-}) => {
-  return (
-    <motion.div
-      className="flex justify-center mt-8 gap-3"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => (
+  <motion.div
+    className="flex justify-center mt-10 gap-4"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.3 }}
+  >
+    <button
+      disabled={currentPage === 1}
+      onClick={() => onPageChange(currentPage - 1)}
+      className="px-4 py-2 rounded-lg bg-[#353535] text-white hover:bg-red-700 transition disabled:opacity-50"
     >
-      <button
-        disabled={currentPage === 1}
-        onClick={() => onPageChange(currentPage - 1)}
-        className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 hover:bg-gray-300 transition"
-      >
-        Prev
-      </button>
-
-      <span className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow">
-        {currentPage} / {totalPages}
-      </span>
-
-      <button
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
-        className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 hover:bg-gray-300 transition"
-      >
-        Next
-      </button>
-    </motion.div>
-  );
-};
+      Prev
+    </button>
+    <span className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold shadow-lg">
+      {currentPage} / {totalPages}
+    </span>
+    <button
+      disabled={currentPage === totalPages}
+      onClick={() => onPageChange(currentPage + 1)}
+      className="px-4 py-2 rounded-lg bg-[#353535] text-white hover:bg-red-700 transition disabled:opacity-50"
+    >
+      Next
+    </button>
+  </motion.div>
+);
 
 export default Pagination;
