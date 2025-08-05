@@ -3,7 +3,7 @@
 import { FC, useEffect } from "react";
 import { motion } from "framer-motion";
 import Loader from "./Loader";
-import { MovieDetail, MovieModalProps } from "../types/Types";
+import { MovieModalProps } from "../types/Types";
 
 const MovieModal: FC<MovieModalProps> = ({ movie, loading, onClose }) => {
   useEffect(() => {

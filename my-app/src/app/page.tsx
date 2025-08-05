@@ -63,8 +63,9 @@ export default function Home() {
     setPage(1);
   }, [debouncedQuery, type, year]);
 
-  const handleOpenModal = async (id: string, e: React.MouseEvent) => {
-    setSelectedMovie(null);
+  const handleOpenModal = async (id: string) => {
+    // const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setSelectedMovie(null)
     setModalLoading(true);
     try {
       const details = await fetchMovieDetails(id);
@@ -124,7 +125,8 @@ export default function Home() {
               <MovieCard
                 key={movie.imdbID}
                 movie={movie}
-                onClick={(e) => handleOpenModal(movie.imdbID, e)}
+                // onClick={(e) => handleOpenModal(movie.imdbID, e)}
+                onClick={() => handleOpenModal(movie.imdbID)}
               />
             ))}
           </motion.div>
@@ -142,7 +144,8 @@ export default function Home() {
           <span className="text-8xl mb-6">🍿</span>
           <h2 className="text-2xl font-bold">Welcome to MovieVault</h2>
           <p className="text-gray-400 mt-2 text-base">
-            Search and explore movies or series, or check out what's trending!
+            Search and explore movies or series, or check out what&apos;s  trending!
+            {/* Search and explore movies or series, or check out what&apos;s trending! */}
           </p>
         </div>
       )}

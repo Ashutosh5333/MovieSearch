@@ -35,7 +35,7 @@ export interface MovieDetail extends Movie {
 }
 
 export interface MovieModalProps {
-  movie: any;
+  movie: MovieDetail | null;
   loading: boolean;
   onClose: () => void;
 }

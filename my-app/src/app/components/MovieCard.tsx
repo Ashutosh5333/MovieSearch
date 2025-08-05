@@ -2,6 +2,7 @@
 import { FC } from "react";
 import { motion } from "framer-motion";
 import { MovieCardProps } from "../types/Types";
+import Image from "next/image";
 
 const MovieCard: FC<MovieCardProps> = ({ movie, onClick }) => (
   <motion.div
@@ -10,7 +11,7 @@ const MovieCard: FC<MovieCardProps> = ({ movie, onClick }) => (
     onClick={onClick}
   >
     {/* Poster */}
-    <img
+    <Image
       src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.jpg"}
       alt={movie.Title}
       className="w-full h-96 object-cover block group-hover:scale-105 transition-transform duration-300"
