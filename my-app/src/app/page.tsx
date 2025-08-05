@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDebounce } from "./hooks/useDebounce";
 import { fetchMovies, fetchMovieDetails } from "./lib/api";
 import SearchBar from "./components/SearchBar";
@@ -9,43 +9,88 @@ import MovieCard from "./components/MovieCard";
 import Pagination from "./components/Pagination";
 import MovieModal from "./components/MovieModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { Movie, MovieDetail, OMDbSearchResponse } from "./types/Types";
 
 export default function Home() {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("");
   const [year, setYear] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const [selectedMovie, setSelectedMovie] = useState<any>(null);
+  const [selectedMovie, setSelectedMovie] = useState<MovieDetail | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
 
   const debouncedQuery = useDebounce(query);
 
   useEffect(() => {
-    if (debouncedQuery) {
+    const fetchData = async () => {
+      if (!debouncedQuery) {
+        setMovies([]);
+        setTotalResults(0);
+        return;
+      }
       setLoading(true);
-      fetchMovies(debouncedQuery, page, type, year).then((data) => {
-        setMovies(data.Search || []);
-        setTotalResults(Number(data.totalResults || 0));
+      try {
+        const data: OMDbSearchResponse = await fetchMovies(
+          debouncedQuery,
+          page,
+          type,
+          year
+        );
+        if (data.Response === "True" && data.Search) {
+          setMovies(data.Search);
+          setTotalResults(Number(data.totalResults || 0));
+        } else {
+          setMovies([]);
+          setTotalResults(0);
+        }
+      } catch {
+        setMovies([]);
+        setTotalResults(0);
+      } finally {
         setLoading(false);
-      });
-    }
+      }
+    };
+
+    fetchData();
   }, [debouncedQuery, page, type, year]);
 
-  const handleOpenModal = async (id: string, e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+  // Reset page on search/filter change
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQuery, type, year]);
 
+  const handleOpenModal = async (id: string, e: React.MouseEvent) => {
+    setSelectedMovie(null);
     setModalLoading(true);
-    const details = await fetchMovieDetails(id);
-    setSelectedMovie(details);
-    setModalLoading(false);
+    try {
+      const details = await fetchMovieDetails(id);
+      setSelectedMovie(details);
+    } catch {
+      setSelectedMovie(null);
+    } finally {
+      setModalLoading(false);
+    }
   };
   const handleCloseModal = () => {
     setSelectedMovie(null);
   };
+
+  // Removing movies with duplicate imdbID
+
+  const uniqueMovies = useMemo(() => {
+    const seen = new Set<string>();
+    return movies.filter((movie) => {
+      if (movie.imdbID && !seen.has(movie.imdbID)) {
+        seen.add(movie.imdbID);
+        return true;
+      }
+      return false;
+    });
+  }, [movies]);
 
   return (
     <div className="min-h-screen bg-[#181818] text-white px-4">
@@ -73,9 +118,9 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-7 mt-8"
+            className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-7 mt-8"
           >
-            {movies.map((movie: any) => (
+            {uniqueMovies.map((movie) => (
               <MovieCard
                 key={movie.imdbID}
                 movie={movie}
@@ -102,7 +147,7 @@ export default function Home() {
         </div>
       )}
       {totalResults > 10 && (
-        <div className="flex justify-center my-10 py-4">
+        <div className="flex justify-center  py-4">
           <Pagination
             currentPage={page}
             totalPages={Math.ceil(totalResults / 10)}
