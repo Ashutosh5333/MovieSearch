@@ -14,6 +14,8 @@ const MovieCard: FC<MovieCardProps> = ({ movie, onClick }) => (
     <Image
       src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.jpg"}
       alt={movie.Title}
+      width={300}
+      height={400}
       className="w-full h-96 object-cover block group-hover:scale-105 transition-transform duration-300"
     />
     {/* Overlay On Hover */}
