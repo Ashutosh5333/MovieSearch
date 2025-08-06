@@ -1,5 +1,5 @@
 
-'use client';
+// 'use client';
 
 const Loader = () => (
   <div className="flex justify-center mt-10">
